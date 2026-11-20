@@ -2,12 +2,503 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/todo.svg" />
+    <link rel="icon" type="image/svg+xml" href="/ticket.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Web todolist project</title>
+    <meta name="theme-color" content="#1c201e" />
+    <meta
+      name="description"
+      content="The Pass — a personal task pass. Print a ticket, fire what matters, clear the pass."
+    />
+    <title>The Pass — personal service</title>
   </head>
   <body>
-    <h1>Web todolist app</h1>
+    <a class="skip-link" href="#pass-board">Skip to tickets</a>
+
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="The Pass home">
+          <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M3 7.5A1.5 1.5 0 0 1 4.5 6h25A1.5 1.5 0 0 1 31 7.5v5.2a3.8 3.8 0 0 0 0 8.6v5.2a1.5 1.5 0 0 1-1.5 1.5h-25A1.5 1.5 0 0 1 3 26.5v-5.2a3.8 3.8 0 0 0 0-8.6V7.5Z"
+            />
+            <path
+              stroke="#FBF8EF"
+              stroke-width="1.6"
+              stroke-dasharray="2 3"
+              d="M11 9v16"
+            />
+            <path
+              stroke="#FBF8EF"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              d="M15 13h10M15 17h7M15 21h9"
+            />
+          </svg>
+          <span class="brand-copy">
+            <span class="brand-name">The Pass</span>
+            <span class="brand-sub"
+              >Personal service ·
+              <time id="today-label">Thu 20 Nov</time></span
+            >
+          </span>
+        </a>
+
+        <button class="search-trigger" id="search-trigger" type="button">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 5 5" stroke-linecap="round" />
+          </svg>
+          <span class="search-label">Search the pass</span>
+          <kbd>⌘K</kbd>
+        </button>
+
+        <div class="topbar-right">
+          <div class="topbar-stat" aria-hidden="true">
+            <span class="topbar-stat-label">Service</span>
+            <strong id="top-counter">00/00</strong>
+          </div>
+          <div class="clock">
+            <span id="clock">--:--</span>
+            <span class="clock-zone">Local</span>
+          </div>
+          <button
+            class="icon-btn"
+            id="help-btn"
+            type="button"
+            aria-label="Keyboard shortcuts"
+            title="Keyboard shortcuts"
+          >
+            ?
+          </button>
+        </div>
+      </header>
+
+      <div class="demo-banner" id="demo-banner" hidden>
+        <span class="demo-tag">Sample service</span>
+        <p>
+          These tickets and the streak are demo data. Clear them when you're
+          ready.
+        </p>
+        <div class="demo-actions">
+          <button type="button" id="demo-clear">Clear sample service</button>
+          <button type="button" id="demo-keep">Keep them</button>
+        </div>
+      </div>
+
+      <div class="shell">
+        <aside class="sidebar" aria-label="Pass filters">
+          <div class="sidebar-head">
+            <h2 class="sidebar-title">The pass</h2>
+            <span class="sidebar-count" id="sidebar-count">0 open</span>
+          </div>
+          <nav
+            class="filter-nav"
+            id="filter-nav"
+            aria-label="Filter tickets"
+          ></nav>
+
+          <div class="sidebar-block" id="tag-block">
+            <h2 class="sidebar-title">Tags</h2>
+            <div class="tag-filter" id="tag-filter"></div>
+          </div>
+
+          <div class="sidebar-foot">
+            <p><kbd>N</kbd> new ticket</p>
+            <p><kbd>/</kbd> search</p>
+            <p><kbd>⌘K</kbd> commands</p>
+          </div>
+        </aside>
+
+        <main class="pass" id="pass-board" tabindex="-1">
+          <div class="mobile-stats" aria-hidden="true">
+            <span>Service <strong id="mobile-counter">00/00</strong></span>
+            <span>Streak <strong id="mobile-streak">0</strong></span>
+          </div>
+
+          <section class="compose" aria-labelledby="compose-label">
+            <form
+              class="printer"
+              id="compose-form"
+              autocomplete="off"
+              novalidate
+            >
+              <div class="printer-top">
+                <div class="printer-slot" aria-hidden="true">
+                  <span class="printer-led"></span>
+                </div>
+                <div class="printer-head">
+                  <h2 id="compose-label">Print a ticket</h2>
+                  <span class="printer-status" id="printer-status" role="status"
+                    >Ready</span
+                  >
+                </div>
+              </div>
+
+              <div class="printer-paper">
+                <label class="sr-only" for="compose-input"
+                  >New ticket title</label
+                >
+                <div class="compose-row">
+                  <span class="ticket-hash" aria-hidden="true">#</span>
+                  <input
+                    id="compose-input"
+                    name="title"
+                    type="text"
+                    placeholder="What's on the pass?"
+                    maxlength="140"
+                    spellcheck="true"
+                  />
+                  <button class="btn-print" type="submit">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 9V4h12v5" />
+                      <path d="M6 17H4v-6h16v6h-2" />
+                      <path d="M7 14h10v6H7z" />
+                    </svg>
+                    <span>Print</span>
+                  </button>
+                </div>
+                <div
+                  class="compose-preview"
+                  id="compose-preview"
+                  aria-live="polite"
+                ></div>
+              </div>
+
+              <div class="compose-meta">
+                <label class="field">
+                  <span class="field-label">Priority</span>
+                  <select id="compose-priority">
+                    <option value="normal">Normal</option>
+                    <option value="fire">Fire</option>
+                    <option value="high">High</option>
+                    <option value="low">Low</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span class="field-label">Due</span>
+                  <input id="compose-due" type="date" />
+                </label>
+                <label class="field">
+                  <span class="field-label">Tag</span>
+                  <input
+                    id="compose-tag"
+                    type="text"
+                    placeholder="service"
+                    maxlength="24"
+                  />
+                </label>
+                <p class="syntax-hint">
+                  <code>#tag</code> <code>@today</code> <code>!fire</code>
+                  <code>every week</code>
+                </p>
+              </div>
+            </form>
+          </section>
+
+          <div class="board-head">
+            <div>
+              <h1 id="board-title">On the pass</h1>
+              <p class="board-sub" id="board-sub">0 open · 0 on fire</p>
+            </div>
+            <div class="board-tools">
+              <div class="segmented" role="group" aria-label="Sort tickets">
+                <button
+                  type="button"
+                  data-sort="priority"
+                  class="is-active"
+                  aria-pressed="true"
+                >
+                  Priority
+                </button>
+                <button type="button" data-sort="due" aria-pressed="false">
+                  Due
+                </button>
+              </div>
+              <button type="button" class="btn-ghost" id="clear-done">
+                Clear cleared
+              </button>
+            </div>
+          </div>
+
+          <div class="pass-board">
+            <div class="rail" aria-hidden="true">
+              <span class="rail-led"></span>
+              <span class="rail-screw rail-screw--top"></span>
+              <span class="rail-screw rail-screw--bottom"></span>
+            </div>
+            <ul class="tickets" id="ticket-list" aria-label="Tickets"></ul>
+            <div class="empty-ticket" id="empty-state" hidden>
+              <span class="empty-no">#----</span>
+              <h2>No tickets on the pass</h2>
+              <p id="empty-copy">Print one above and it lands here.</p>
+              <button type="button" class="btn-ghost" id="empty-action">
+                Print a ticket
+              </button>
+            </div>
+          </div>
+
+          <section
+            class="cleared"
+            id="cleared-section"
+            aria-labelledby="cleared-title"
+            hidden
+          >
+            <button
+              type="button"
+              class="cleared-toggle"
+              id="cleared-toggle"
+              aria-expanded="false"
+              aria-controls="cleared-list"
+            >
+              <span id="cleared-title">Cleared</span>
+              <span class="cleared-count" id="cleared-count">0</span>
+              <svg
+                class="cleared-chevron"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <path d="m6 9 6 6 6-6" stroke-linecap="round" />
+              </svg>
+            </button>
+            <ul
+              class="tickets tickets--cleared"
+              id="cleared-list"
+              aria-label="Cleared tickets"
+            ></ul>
+          </section>
+        </main>
+
+        <aside class="stats" aria-label="Service stats">
+          <section class="counter-panel">
+            <div class="panel-head">
+              <h2 class="panel-label">Today's service</h2>
+              <span class="live-dot" aria-hidden="true"></span>
+            </div>
+            <div
+              class="odometer"
+              id="odometer"
+              role="img"
+              aria-label="0 of 0 tickets cleared"
+            >
+              00/00
+            </div>
+            <p class="counter-sub" id="counter-sub">No service scheduled</p>
+            <div
+              class="progress"
+              role="progressbar"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+              aria-label="Today's tickets cleared"
+            >
+              <span class="progress-fill" id="progress-fill"></span>
+            </div>
+          </section>
+
+          <section class="streak-panel">
+            <div class="panel-head">
+              <h2 class="panel-label">Service streak</h2>
+              <span class="streak-badge" id="streak-badge">0d</span>
+            </div>
+            <div class="streak-week" id="streak-week"></div>
+            <p class="streak-note" id="streak-note">
+              Print a ticket and clear it to start.
+            </p>
+          </section>
+
+          <section class="next-panel">
+            <h2 class="panel-label">Next up</h2>
+            <div id="next-up"></div>
+          </section>
+
+          <section class="keys-panel">
+            <h2 class="panel-label">Shortcuts</h2>
+            <dl class="key-list">
+              <div><dt><kbd>N</kbd></dt><dd>New ticket</dd></div>
+              <div><dt><kbd>/</kbd></dt><dd>Search</dd></div>
+              <div><dt><kbd>⌘K</kbd></dt><dd>Commands</dd></div>
+              <div>
+                <dt><kbd>J</kbd><kbd>K</kbd></dt>
+                <dd>Move tickets</dd>
+              </div>
+              <div><dt><kbd>Space</kbd></dt><dd>Clear ticket</dd></div>
+              <div><dt><kbd>E</kbd></dt><dd>Edit ticket</dd></div>
+            </dl>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <div class="palette" id="palette" hidden>
+      <div class="palette-scrim" data-palette-close></div>
+      <div
+        class="palette-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="palette-title"
+      >
+        <h2 class="sr-only" id="palette-title">Command palette</h2>
+        <div class="palette-search">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 5 5" stroke-linecap="round" />
+          </svg>
+          <input
+            id="palette-input"
+            type="text"
+            placeholder="Search tickets or run a command"
+            autocomplete="off"
+            aria-controls="palette-results"
+            aria-autocomplete="list"
+          />
+          <kbd>Esc</kbd>
+        </div>
+        <ul
+          class="palette-results"
+          id="palette-results"
+          role="listbox"
+          aria-label="Commands and tickets"
+        ></ul>
+        <div class="palette-foot">
+          <span><kbd>↑</kbd><kbd>↓</kbd> move</span>
+          <span><kbd>↵</kbd> run</span>
+          <span><kbd>Esc</kbd> close</span>
+        </div>
+      </div>
+    </div>
+
+    <aside class="drawer" id="drawer" hidden aria-hidden="true">
+      <div class="drawer-scrim" data-drawer-close></div>
+      <div
+        class="drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+      >
+        <header class="drawer-head">
+          <div>
+            <p class="drawer-kicker" id="drawer-no">Ticket #0000</p>
+            <h2 id="drawer-title">Edit ticket</h2>
+          </div>
+          <button
+            type="button"
+            class="icon-btn icon-btn--light"
+            id="drawer-close"
+            aria-label="Close ticket editor"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round" />
+            </svg>
+          </button>
+        </header>
+
+        <form class="drawer-form" id="drawer-form">
+          <label class="drawer-field">
+            <span>Title</span>
+            <input id="edit-title" type="text" maxlength="140" required />
+          </label>
+
+          <div class="drawer-grid">
+            <label class="drawer-field">
+              <span>Priority</span>
+              <select id="edit-priority">
+                <option value="normal">Normal</option>
+                <option value="fire">Fire</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+            <label class="drawer-field">
+              <span>Due</span>
+              <input id="edit-due" type="date" />
+            </label>
+          </div>
+
+          <label class="drawer-field">
+            <span>Tags <em>comma separated</em></span>
+            <input id="edit-tags" type="text" maxlength="80" />
+          </label>
+
+          <label class="drawer-field">
+            <span>Repeat</span>
+            <select id="edit-recurrence">
+              <option value="none">Never</option>
+              <option value="daily">Every day</option>
+              <option value="weekly">Every week</option>
+              <option value="monthly">Every month</option>
+            </select>
+          </label>
+
+          <p class="drawer-meta" id="drawer-meta"></p>
+
+          <div class="drawer-actions">
+            <button type="button" class="btn-danger" id="drawer-delete">
+              Void ticket
+            </button>
+            <button type="submit" class="btn-primary">Save ticket</button>
+          </div>
+        </form>
+      </div>
+    </aside>
+
+    <dialog class="help-dialog" id="help-dialog">
+      <div class="help-head">
+        <h2>Service shortcuts</h2>
+        <form method="dialog">
+          <button class="icon-btn" aria-label="Close shortcuts">×</button>
+        </form>
+      </div>
+      <dl class="help-list">
+        <div><dt><kbd>N</kbd></dt><dd>New ticket</dd></div>
+        <div><dt><kbd>/</kbd></dt><dd>Search tickets</dd></div>
+        <div><dt><kbd>⌘K</kbd></dt><dd>Command palette</dd></div>
+        <div><dt><kbd>Enter</kbd></dt><dd>Print the ticket</dd></div>
+        <div><dt><kbd>J</kbd><kbd>K</kbd></dt><dd>Move between tickets</dd></div>
+        <div><dt><kbd>Space</kbd></dt><dd>Clear the focused ticket</dd></div>
+        <div><dt><kbd>E</kbd></dt><dd>Edit the focused ticket</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close any panel</dd></div>
+      </dl>
+      <p class="help-note">
+        Everything works without a mouse. The ticket you focus is the one the
+        keys act on.
+      </p>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+      <span class="toast-msg" id="toast-msg"></span>
+      <button type="button" class="toast-action" id="toast-action" hidden>
+        Undo
+      </button>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
