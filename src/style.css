@@ -7,3 +7,64 @@ body {
 * {
   font-family: Helvetica, Arial, sans-serif;
 }
+
+header {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+#error-message {
+  display: none;
+  color: red;
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+#todo-input {
+  display: flex;
+  min-width: 3rem;
+  min-height: 2rem;
+}
+
+#todo-input::placeholder {
+  opacity: 1;
+}
+
+#todo-input::placeholder-fade {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+#todo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.4rem;
+  flex-direction: row;
+}
+
+.card-style {
+  padding: 0.4rem;
+  border: 0.25rem solid transparent;
+  border-radius: 0.25rem;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, black, red) border-box;
+}
+
+.todo-item {
+  display: flex;
+}
+
+#todo-elements {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
