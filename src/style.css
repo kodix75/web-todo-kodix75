@@ -28,12 +28,8 @@ header {
 }
 
 #todo-input::placeholder {
-  opacity: 1;
-}
-
-#todo-input::placeholder-fade {
-  opacity: 0;
-  transition: opacity 250ms ease;
+  opacity: 0.8;
+  font-size: 0.9rem;
 }
 
 #todo-form {
