@@ -1,11 +1,20 @@
+@import url("https://cdn.jsdelivr.net/gh/mshaugh/nerdfont-webfonts@v3.3.0/build/firacode-nerd-font.css");
+
 html,
 body {
   padding: 0;
-  margin: 0;
+  margin: 1rem;
 }
 
 * {
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "FiraCode Nerd Font", monospace;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+main {
+  display: flex;
+  justify-content: center;
 }
 
 header {
@@ -17,19 +26,18 @@ header {
 #error-message {
   display: none;
   color: red;
-  font-style: italic;
-  font-size: 1.1rem;
+  font-weight: bold;
 }
 
 #todo-input {
   display: flex;
-  min-width: 3rem;
-  min-height: 2rem;
+  width: 25rem;
+  height: 2.5rem;
 }
 
 #todo-input::placeholder {
   opacity: 0.8;
-  font-size: 0.9rem;
+  font-style: italic;
 }
 
 #todo-form {
@@ -46,21 +54,33 @@ nav {
   flex-direction: row;
 }
 
+#add-todo-button {
+  padding: 1rem;
+  cursor: pointer;
+}
+
 .card-style {
-  padding: 0.4rem;
+  padding: 0.5rem;
   border: 0.25rem solid transparent;
-  border-radius: 0.25rem;
+  border-radius: 0.3rem;
   background:
     linear-gradient(white, white) padding-box,
     linear-gradient(90deg, black, red) border-box;
+  align-self: center;
 }
 
 .todo-item {
   display: flex;
+  align-items: center;
+  align-self: baseline;
+  width: 33.5rem;
 }
 
 #todo-elements {
+  padding: 0;
   display: flex;
   gap: 1rem;
-  justify-content: center;
+  flex-direction: column;
+  min-height: auto;
+  min-width: auto;
 }
