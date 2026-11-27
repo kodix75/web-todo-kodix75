@@ -51,6 +51,7 @@ nav {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.4rem;
+  width: 37.35rem;
   flex-direction: row;
 }
 
@@ -83,4 +84,5 @@ nav {
   flex-direction: column;
   min-height: auto;
   min-width: auto;
+  padding: 5rem 0.8rem 0.8rem 1rem;
 }

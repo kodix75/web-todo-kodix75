@@ -24,8 +24,14 @@ const { todoInput, errorMessage, todoElements, todoForm } = checkedElement
 // --- Storage keys ---
 const TODOS_KEY = 'todos'
 // --- Save ---
-function saveTodos(todos: Todo[]): void {
-  localStorage.setItem(TODOS_KEY, JSON.stringify(todos))
+function saveTodos(todos: Todo[]): boolean {
+  try {
+    localStorage.setItem(TODOS_KEY, JSON.stringify(todos))
+    return true
+  } catch (err) {
+    console.error('Could not save todos', err)
+    return false
+  }
 }
 // ---- Load ----
 function isTodo(x: unknown): x is Todo {
@@ -38,20 +44,20 @@ function isTodo(x: unknown): x is Todo {
   )
 }
 
-function loadTodos(): Todo[] {
-  const rawTodo = localStorage.getItem(TODOS_KEY)
-  if (rawTodo === null) return []
-
+function loadTodos(): Todo[] | null {
   try {
+    const rawTodo = localStorage.getItem(TODOS_KEY)
+    if (rawTodo === null) return []
     const parsed: unknown = JSON.parse(rawTodo)
     if (!Array.isArray(parsed)) return []
     return parsed.filter(isTodo)
   } catch {
-    return []
+    console.log('Error task did not load or is false')
+    return null
   }
 }
 // --- State ---
-const todos: Todo[] = loadTodos()
+let todos: Todo[] = loadTodos() ?? []
 // --- Render ---
 function renderTodo(todo: Todo): void {
   const li = document.createElement('li')
@@ -79,8 +85,10 @@ function addTask(): void {
     text,
     done: false,
   }
-  todos.push(newTodo)
-  renderTodo(newTodo)
+  const latest = loadTodos() ?? todos
+  latest.push(newTodo)
+  todos = latest
+  renderAll()
   saveTodos(todos)
 }
 // --- Events ---
@@ -89,6 +97,10 @@ todoForm.addEventListener('submit', (event: SubmitEvent) => {
   addTask()
   todoInput.value = ''
 })
-
+window.addEventListener('storage', (event: StorageEvent) => {
+  if (event.key !== TODOS_KEY && event.key !== null) return
+  todos = loadTodos() ?? todos
+  renderAll()
+})
 // --- Render All ---
 renderAll()
